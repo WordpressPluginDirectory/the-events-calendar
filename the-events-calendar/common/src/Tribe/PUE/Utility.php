@@ -33,14 +33,6 @@ if ( ! class_exists( 'Tribe__PUE__Utility' ) ) {
 		public $custom_update;
 		public $license_error;
 		public $auth_url;
-		/**
-		 * @var bool
-		 */
-		public $api_expired;
-		/**
-		 * @var bool
-		 */
-		public $api_upgrade;
 
 		/**
 		 * Create a new instance of Tribe__PUE__Utility from its JSON-encoded representation.
@@ -102,26 +94,13 @@ if ( ! class_exists( 'Tribe__PUE__Utility' ) ) {
 		/**
 		 * Transform the update into the format used by WordPress native plugin API.
 		 *
-		 * @param ?string $plugin_file Plugin bootstrap file path.
-		 *
 		 * @return object
 		 */
-		public function to_wp_format( $plugin_file = null ) {
+		public function to_wp_format() {
 			$update = new StdClass;
 
-			$id     = $this->id;
-			$plugin = $this->plugin;
-
-			if ( empty( $this->id ) ) {
-				$id = 'stellarwp/plugins/' . $this->slug;
-			}
-
-			if ( empty( $plugin ) && ! empty( $plugin_file ) ) {
-				$plugin = $plugin_file;
-			}
-
-			$update->id          = $id;
-			$update->plugin      = $plugin;
+			$update->id          = $this->id;
+			$update->plugin      = $this->plugin;
 			$update->slug        = $this->slug;
 			$update->new_version = $this->version;
 			$update->url         = $this->homepage;

@@ -33,4 +33,5 @@ abstract class Abstract_Subscriber implements Subscriber_Interface {
 	public function __construct( ContainerInterface $container ) {
 		$this->container = $container;
 	}
+
 }

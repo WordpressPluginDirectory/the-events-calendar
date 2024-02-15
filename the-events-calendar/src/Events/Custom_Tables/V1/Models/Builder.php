@@ -364,16 +364,10 @@ class Builder {
 			 */
 			$result = $wpdb->query( $SQL );
 			if ( $result === false ) {
-				do_action(
-					'tribe_log',
-					'debug',
-					'Builder: query failure.',
-					[
-						'source' => __CLASS__ . ' ' . __METHOD__ . ' ' . __LINE__,
-						'trace'  => debug_backtrace( 2, 5 ), // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
-						'error'  => $wpdb->last_error,
-					]
-				);
+				do_action( 'tribe_log', 'debug', 'Builder: upsert query failure.', [
+					'source' => __CLASS__ . ' ' . __METHOD__ . ' ' . __LINE__,
+					'trace'  => debug_backtrace( 2, 5 )
+				] );
 			}
 
 			// If we have a cache, let's clear it.
@@ -439,12 +433,21 @@ class Builder {
 			$columns      = $validated['columns'];
 			$placeholders = $validated['placeholders'];
 
-			$sql             = "INSERT INTO {$wpdb->prefix}{$this->model->table_name()} ($columns) VALUES $placeholders";
-			$sql             = $wpdb->prepare( $sql, ...$validated['values'] );
-			$this->queries[] = $sql;
+			$SQL             = "INSERT INTO {$wpdb->prefix}{$this->model->table_name()} ($columns) VALUES $placeholders";
+			$SQL             = $wpdb->prepare( $SQL, ...$validated['values'] );
+			$this->queries[] = $SQL;
 			if ( $this->execute_queries ) {
-				$query_result = $this->query( $sql );
+				$query_result = $wpdb->query( $SQL );
 				$result       += (int) $query_result;
+			}
+			// Log our errors.
+			if ( $query_result === false && $wpdb->last_error ) {
+				do_action( 'tribe_log',
+					'error',
+					"ORM Builder mysql error while performing insert on {$this->model->table_name()}.", [
+						'source'      => __METHOD__ . ':' . __LINE__,
+						'mysql error' => $wpdb->last_error,
+					] );
 			}
 		} while ( count( $data ) );
 
@@ -524,14 +527,14 @@ class Builder {
 			$pieces[] = $where;
 		}
 
-		$sql = implode( "\n", $pieces );
+		$SQL = implode( "\n", $pieces );
 
-		$this->queries[] = $sql;
+		$this->queries[] = $SQL;
 
 		// If we have a cache, let's clear it.
 		$model->flush_cache();
 
-		return $this->execute_queries ? $this->query( $sql ) : false;
+		return $this->execute_queries ? $wpdb->query( $SQL ) : false;
 	}
 
 	/**
@@ -555,7 +558,7 @@ class Builder {
 		}
 
 		$this->queries[] = $SQL;
-		$result          = $this->execute_queries ? $this->query( $SQL ) : false;
+		$result          = $this->execute_queries ? $wpdb->query( $SQL ) : false;
 
 		// If an error happen or no row was updated by the query above.
 		if ( $result === false || (int) $result === 0 ) {
@@ -837,14 +840,6 @@ class Builder {
 			if ( empty( $results ) ) {
 				// Run a fetch if we're out of results to return, maybe get some results.
 				$results = $wpdb->get_results( $semi_prepared . " OFFSET {$offset}", ARRAY_A );
-				if ( $results === false || $wpdb->last_error ) {
-					do_action( 'tribe_log', 'debug', 'Builder: query failure.', [
-						'source' => __METHOD__ . ':' . __LINE__,
-						'trace'  => debug_backtrace( 2, 5 ), // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
-						'error'  => $wpdb->last_error
-					] );
-				}
-
 				$offset  += $batch_size;
 				$found   = count( $results );
 				$results = array_reverse( $results );
@@ -920,55 +915,14 @@ class Builder {
 			return 0;
 		}
 
-		$sql             = $this->get_sql();
-		$this->queries[] = $sql;
+		$SQL             = $this->get_sql();
+		$this->queries[] = $SQL;
 
-		$result = $wpdb->get_var( $sql );
-		if ( $result === false || $wpdb->last_error ) {
-			do_action(
-				'tribe_log',
-				'debug',
-				'Builder: query failure.',
-				[
-					'source' => __METHOD__ . ':' . __LINE__,
-					'trace'  => debug_backtrace( 2, 5 ), // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
-					'error'  => $wpdb->last_error,
-				]
-			);
-		}
-
-		return (int) $result;
-	}
-
-	/**
-	 * Run a query and return the results directly from $wpdb->query().
-	 *
-	 * @since 6.3.1
-	 *
-	 * @param string $query The SQL query to run on the database.
-	 *
-	 * @return bool|int|mixed|\mysqli_result|resource|null The query result or null.
-	 */
-	protected function query( string $query ) {
-		global $wpdb;
-		$result = null;
 		if ( $this->execute_queries ) {
-			$result = $wpdb->query( $query );
-			if ( $result === false || $wpdb->last_error ) {
-				do_action(
-					'tribe_log',
-					'debug',
-					'Builder: query failure.',
-					[
-						'source' => __METHOD__ . ':' . __LINE__,
-						'trace'  => debug_backtrace( 2, 5 ), // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
-						'error'  => $wpdb->last_error,
-					]
-				);
-			}
+			return (int) $wpdb->get_var( $SQL );
 		}
 
-		return $result;
+		return 0;
 	}
 
 	/**
@@ -1056,14 +1010,6 @@ class Builder {
 				$SQL,
 				ARRAY_A
 			);
-
-			if ( $results === false || $wpdb->last_error ) {
-				do_action( 'tribe_log', 'debug', 'Builder: query failure.', [
-					'source' => __CLASS__ . ' ' . __METHOD__ . ' ' . __LINE__,
-					'trace'  => debug_backtrace( 2, 5 ), // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
-					'error'  => $wpdb->last_error
-				] );
-			}
 		}
 
 		if ( ARRAY_A === $this->output_format ) {
@@ -1618,7 +1564,7 @@ class Builder {
 		do {
 			$batch         = array_splice( $keys, 0, $this->batch_size );
 			$keys_interval = implode( ',', array_map( 'absint', $batch ) );
-			$deleted       += $this->query( "DELETE FROM {$table} WHERE {$primary_key} IN ({$keys_interval})" );
+			$deleted       += $wpdb->query( "DELETE FROM {$table} WHERE {$primary_key} IN ({$keys_interval})" );
 
 			// If we have a cache, let's clear it.
 			foreach ( $models as $model ) {

@@ -24,4 +24,5 @@ interface Subscriber_Interface {
 	 * @return void
 	 */
 	public function register();
+
 }

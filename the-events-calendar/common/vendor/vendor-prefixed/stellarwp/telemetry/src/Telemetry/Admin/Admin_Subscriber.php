@@ -35,6 +35,7 @@ class Admin_Subscriber extends Abstract_Subscriber {
 	 */
 	public function register(): void {
 		add_action( 'admin_init', [ $this, 'maybe_enqueue_admin_assets' ] );
+
 	}
 
 	/**
@@ -62,4 +63,5 @@ class Admin_Subscriber extends Abstract_Subscriber {
 			$this->container->get( Resources::class )->enqueue_admin_assets();
 		}
 	}
+
 }

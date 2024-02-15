@@ -61,16 +61,6 @@ class Tribe__Admin__Notices {
 	 */
 	public static $meta_key = 'tribe-dismiss-notice';
 
-
-	/**
-	 * Request param used to pass the nonce for dismissal.
-	 *
-	 * @since 5.2.1
-	 *
-	 * @var string
-	 */
-	public static string $nonce_param = 'tec-dismiss-notice-nonce';
-
 	/**
 	 * User Meta Key prefix that stores when notices have been dismissed.
 	 *
@@ -139,7 +129,7 @@ class Tribe__Admin__Notices {
 			if ( $this->transient_notice_expired( $slug ) ) {
 				continue;
 			}
-			[ $html, $args, $expire ] = $transients[ $slug ];
+			list( $html, $args, $expire ) = $transients[ $slug ];
 			$this->register( $slug, $html, $args );
 		}
 
@@ -164,19 +154,11 @@ class Tribe__Admin__Notices {
 	 * @return void
 	 */
 	public function maybe_dismiss() {
-		$slug = tribe_get_request_var( self::$meta_key, false );
-		if ( empty( $slug ) ) {
+		if ( empty( $_GET[ self::$meta_key ] ) ) {
 			wp_send_json( false );
 		}
 
-		$slug = sanitize_key( $slug );
-
-		$nonce        = tribe_get_request_var( self::$nonce_param, false );
-		$nonce_action = $this->get_nonce_action( $slug );
-
-		if ( ! wp_verify_nonce( $nonce, $nonce_action ) ) {
-			wp_send_json( false );
-		}
+		$slug = sanitize_key( $_GET[ self::$meta_key ] );
 
 		// Send a JSON answer with the status of dismissal
 		wp_send_json( $this->dismiss( $slug ) );
@@ -270,9 +252,7 @@ class Tribe__Admin__Notices {
 			return false;
 		}
 
-		$notice = $this->get( $slug );
-
-		// Mark the notice as rendered.
+		$notice                              = $this->get( $slug );
 		$this->notices[ $slug ]->is_rendered = true;
 
 		$classes   = [ 'tribe-dismiss-notice', 'notice' ];
@@ -296,15 +276,7 @@ class Tribe__Admin__Notices {
 			$content = sprintf( '<%1$s>' . $content . '</%1$s>', $wrap );
 		}
 
-		$nonce = wp_create_nonce( $this->get_nonce_action( $notice->slug ) );
-
-		$html = sprintf(
-			'<div class="%s" data-ref="%s" data-dismiss-nonce="%s">%s</div>',
-			implode( ' ', $classes ),
-			$notice->slug,
-			$nonce,
-			$content
-		);
+		$html = sprintf( '<div class="%s" data-ref="%s">%s</div>', implode( ' ', $classes ), $notice->slug, $content );
 		tribe_asset_enqueue_group( 'tec-admin-notices' );
 
 		if ( ! $return ) {
@@ -559,7 +531,6 @@ class Tribe__Admin__Notices {
 		return $affected;
 	}
 
-
 	/**
 	 * Register a Notice and attach a callback to the required action to display it correctly
 	 *
@@ -772,7 +743,7 @@ class Tribe__Admin__Notices {
 		if ( ! $this->did_prune_transients ) {
 			$this->did_prune_transients = true;
 			foreach ( $notices as $key => $notice ) {
-				[ $html, $args, $expire_at ] = $notice;
+				list( $html, $args, $expire_at ) = $notice;
 
 				if ( $expire_at < time() ) {
 					unset( $notices[ $key ] );
@@ -783,19 +754,6 @@ class Tribe__Admin__Notices {
 		tribe( 'cache' )['transient_admin_notices'] = $notices;
 
 		return $notices;
-	}
-
-	/**
-	 * Returns the nonce action for a given notice slug.
-	 *
-	 * @since 5.2.1
-	 *
-	 * @param string $slug Which notice we are handling.
-	 *
-	 * @return string
-	 */
-	protected function get_nonce_action( string $slug ): string {
-		return 'tec_notice_dismiss_' . $slug;
 	}
 
 	/**
@@ -849,7 +807,7 @@ class Tribe__Admin__Notices {
 			return true;
 		}
 
-		[ $html, $args, $expire ] = $transients[ $slug ];
+		list( $html, $args, $expire ) = $transients[ $slug ];
 		if ( $expire < time() ) {
 			return true;
 		}
