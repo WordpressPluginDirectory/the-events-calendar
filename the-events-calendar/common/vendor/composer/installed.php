@@ -3,7 +3,7 @@
         'name' => 'the-events-calendar/tribe-common',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '1d046fdc302f88c870f9acc2a9c25da865f3fb4e',
+        'reference' => 'f891e1311a19b95edb58e53769de959fafa3883d',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -120,7 +120,7 @@
         'the-events-calendar/tribe-common' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '1d046fdc302f88c870f9acc2a9c25da865f3fb4e',
+            'reference' => 'f891e1311a19b95edb58e53769de959fafa3883d',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
