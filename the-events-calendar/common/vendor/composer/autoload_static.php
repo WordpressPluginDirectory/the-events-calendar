@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit6b73fd2c3dd621ec2cc01b42d50549af
+class ComposerStaticInita21c3ab68975487869bd79c341edb7cb
 {
     public static $prefixLengthsPsr4 = array (
         'l' => 
@@ -28,6 +28,7 @@ class ComposerStaticInit6b73fd2c3dd621ec2cc01b42d50549af
             'StellarWP\\Installer\\' => 20,
             'StellarWP\\DB\\' => 13,
             'StellarWP\\ContainerContract\\' => 28,
+            'StellarWP\\Assets\\' => 17,
         ),
         'P' => 
         array (
@@ -96,6 +97,10 @@ class ComposerStaticInit6b73fd2c3dd621ec2cc01b42d50549af
         'StellarWP\\ContainerContract\\' => 
         array (
             0 => __DIR__ . '/..' . '/stellarwp/container-contract/src',
+        ),
+        'StellarWP\\Assets\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/stellarwp/assets/src/Assets',
         ),
         'Psr\\Log\\' => 
         array (
@@ -238,9 +243,9 @@ class ComposerStaticInit6b73fd2c3dd621ec2cc01b42d50549af
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit6b73fd2c3dd621ec2cc01b42d50549af::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit6b73fd2c3dd621ec2cc01b42d50549af::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit6b73fd2c3dd621ec2cc01b42d50549af::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInita21c3ab68975487869bd79c341edb7cb::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInita21c3ab68975487869bd79c341edb7cb::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInita21c3ab68975487869bd79c341edb7cb::$classMap;
 
         }, null, ClassLoader::class);
     }
