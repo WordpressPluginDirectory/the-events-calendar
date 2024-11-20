@@ -3,9 +3,9 @@
 Contributors: theeventscalendar, borkweb, bordoni, brianjessee, aguseo, camwynsp, GeoffBel, jentheo, leahkoerper, lucatume, neillmcshea, vicskf, zbtirrell, juanfra
 Tags: events, calendar, event, schedule, organizer
 Donate link: https://evnt.is/29
-Stable tag: 6.8.0
+Stable tag: 6.8.2
 Requires at least: 6.3
-Tested up to: 6.6.2
+Tested up to: 6.7
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -239,6 +239,19 @@ Remember to always make a backup of your database and files before updating!
 
 == Changelog ==
 
+= [6.8.2] 2024-11-19 =
+
+* Feature - Introduced Help Hub, a centralized support and resource interface for enhanced user guidance and plugin assistance.
+* Fix - Prevent a couple of instances where translations were loading too early, avoids notices with `_load_textdomain_just_in_time` on WordPress 6.7. [TEC-5325]
+* Deprecated - Deprecated the unused update/activation page [TEC-5311]
+* Language - 0 new strings added, 0 updated, 0 fuzzied, and 0 obsoleted.
+
+= [6.8.1] 2024-11-04 =
+
+* Fix - Order of past events in the list view when no future events exist. [TEC-5309]
+* Fix - Prevent new Settings pages from over-sanitizing textarea fields, thus removing HTML from before/after in the Events UI. [TEC-5283]
+* Fix - Include backwards compatibility for deprecated proprieties in the Settings class used in The Events Calendar and Event Tickets [TEC-5312]
+
 = [6.8.0] 2024-10-30 =
 
 * Version - The Events Calendar 6.8.0 is only compatible with Events Calendar Pro 7.3.0 and higher.
@@ -267,7 +280,7 @@ Remember to always make a backup of your database and files before updating!
 * Version - The Events Calendar 6.7.0 is only compatible with Events Filterbar 5.5.7 and higher
 * Version - The Events Calendar 6.7.0 is only compatible with Events Community 5.0.4 and higher
 * Feature - New and improved settings layout and styles. [TEC-5124]
-* Fix - Correct translation domains in a few templates. [TBD]
+* Fix - Correct translation domains in a few templates. [6.7.2]
 * Tweak - Added filters: `tec_settings_gmaps_js_api_start`, `tec_events_settings_display_calendar_display_section`, `tec_general_settings_viewing_section`, `tec_events_aggregator_show_all_settings`, `tec_events_settings_tab_imports_fields`
 * Tweak - Removed filters: `tec_events_should_display_events_template_setting`, `tec_events_display_settings_tab_fields`, `tribe_general_settings_tab_fields`
 * Tweak - Added actions: `tec_events_settings_tab_display_additional_content`, `tec_events_settings_tab_display_calendar`, `tec_events_settings_tab_display_date_time`, `tec_events_settings_tab_display_maps`, `tec_events_settings_tab_general_debugging`, `tec_events_settings_tab_general_editing`, `tec_events_settings_tab_general_maintenance`, `tec_events_settings_tab_general_viewing`, `tec_settings_tab_addons`, `tec_events_settings_tab_display`, `tec_events_settings_tab_general`, `tec_events_settings_tab_imports`
