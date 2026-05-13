@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'the-events-calendar/the-events-calendar',
-        'pretty_version' => 'dev-release/M26.dewgong',
-        'version' => 'dev-release/M26.dewgong',
-        'reference' => 'd58aa0ae0aa6592f95ab85a3b8c64a2893d5c504',
+        'pretty_version' => 'dev-release/harbor-update',
+        'version' => 'dev-release/harbor-update',
+        'reference' => 'd8f12df3e8d7f30b190a2a1b5ec30ec43d402554',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'the-events-calendar/the-events-calendar' => array(
-            'pretty_version' => 'dev-release/M26.dewgong',
-            'version' => 'dev-release/M26.dewgong',
-            'reference' => 'd58aa0ae0aa6592f95ab85a3b8c64a2893d5c504',
+            'pretty_version' => 'dev-release/harbor-update',
+            'version' => 'dev-release/harbor-update',
+            'reference' => 'd8f12df3e8d7f30b190a2a1b5ec30ec43d402554',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
