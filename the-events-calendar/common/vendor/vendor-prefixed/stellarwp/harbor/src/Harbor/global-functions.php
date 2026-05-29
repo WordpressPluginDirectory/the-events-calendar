@@ -33,13 +33,24 @@ if ( ! function_exists( '_lw_harbor_instance_registry' ) ) {
 		/** @var array<string, string[]> $instances */
 		static $instances = [];
 
+		if ( '' === $version ) {
+			return $instances;
+		}
+
+		if ( did_action( 'wp_loaded' ) ) {
+			_doing_it_wrong(
+				__FUNCTION__,
+				'Registrations are only accepted during the bootstrap window (before wp_loaded).',
+				'1.2.0'
+			);
+			return $instances;
+		}
+
 		// Only accept registrations during the bootstrap window (before wp_loaded).
 		// All real Harbor instances initialize during plugins_loaded, so anything
 		// arriving after wp_loaded is outside the expected lifecycle and is ignored
 		// to prevent external code from injecting fake versions into the registry.
-		if ( $version !== '' && ! did_action( 'wp_loaded' ) ) {
-			$instances[ $version ][] = $plugin_basename;
-		}
+		$instances[ $version ][] = $plugin_basename;
 
 		return $instances;
 	}
@@ -229,19 +240,24 @@ if ( ! function_exists( 'lw_harbor_get_license_page_url' ) ) {
 	}
 }
 
-if ( ! function_exists( 'lw_harbor_has_consent' ) ) {
+if ( ! function_exists( 'lw_harbor_refresh_catalog' ) ) {
 	/**
-	 * Whether the site owner has consented to external API communications.
+	 * Forces a synchronous fresh catalog fetch from the Commerce Portal API.
 	 *
-	 * Use this in any code path that would contact a Liquid Web service so
-	 * the operation can be short-circuited when consent has not been granted.
+	 * Bypasses the cached catalog state and re-populates it from the upstream
+	 * service. Use after any action where the caller has reason to believe the
+	 * remote catalog has changed (e.g. a user-initiated "refresh" button).
 	 *
-	 * @since 1.1.0
+	 * Synchronous: this performs an outbound HTTP request and blocks until the
+	 * Portal API responds. Returns true on a successful refresh, false on any
+	 * failure (HTTP error, parsing error, or Harbor not being active).
 	 *
-	 * @return bool
+	 * @since 1.4.0
+	 *
+	 * @return bool Whether the catalog was refreshed successfully.
 	 */
-	function lw_harbor_has_consent(): bool {
-		$callback = _lw_harbor_global_function_registry( 'lw_harbor_has_consent' );
+	function lw_harbor_refresh_catalog(): bool {
+		$callback = _lw_harbor_global_function_registry( 'lw_harbor_refresh_catalog' );
 
 		return $callback ? (bool) $callback() : false;
 	}
